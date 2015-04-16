@@ -56,12 +56,24 @@ public class Post {
         return this.title;
     }
 
+    public String county() {
+        return this.county;
+    }
+
+    public String category() {
+        return this.category;
+    }
+
     public String link() {
         return this.link;
     }
 
     public String id() {
         return this.postId;
+    }
+
+    public String location() {
+        return this.location;
     }
 
     @Override
