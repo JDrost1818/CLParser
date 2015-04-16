@@ -55,7 +55,6 @@ public class Manager {
                     message += "\t$" +  curPost.price() + " - " +
                                         curPost.title() + " " +
                                         curPost.link() + "\n";
-                    newPosts.remove(curPost);
                 }
             }
             message += "\n";
