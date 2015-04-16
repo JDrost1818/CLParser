@@ -19,7 +19,8 @@ public class SearchGUI extends JPanel {
     private Main controller;
 
     private String keywordHoldingText = "Keywords";
-    private String excludWordHoldingText = "Excluded Words";
+    private String excludeWordHoldingText = "Excluded Words";
+    private JPanel contentPanel;
 
     public SearchGUI(Main _controller, Container parent) {
         this.controller = _controller;
@@ -33,7 +34,7 @@ public class SearchGUI extends JPanel {
         add(title);
 
         // Content Panel
-        JPanel contentPanel = new JPanel(contentPanelLayout);
+        contentPanel = new JPanel(contentPanelLayout);
         contentPanel.setBounds(
                 GUIData.STD_MARGIN,
                 GUIData.STD_MARGIN + title.getHeight(),
@@ -49,7 +50,7 @@ public class SearchGUI extends JPanel {
         JPanel editSearchPanel = new JPanel(null);
         contentPanel.add("edit", editSearchPanel);
 
-        contentPanelLayout.show(contentPanel, "create");
+        display("create");
 
     }
 
@@ -71,7 +72,7 @@ public class SearchGUI extends JPanel {
         createSearchPanel.add(excludeLabel);
 
         // Textfield where user can enter words to ignore during search
-        final SimpleTextField excludedWordsEntry = new SimpleTextField(excludWordHoldingText);
+        final SimpleTextField excludedWordsEntry = new SimpleTextField(excludeWordHoldingText);
         excludedWordsEntry.setBounds(
                 GUIData.STD_MARGIN + excludeLabel.getWidth(),
                 excludeLabel.getY(),
@@ -169,5 +170,9 @@ public class SearchGUI extends JPanel {
         createSearchPanel.add(createButton);
 
         return createSearchPanel;
+    }
+
+    public void display(String key) {
+        contentPanelLayout.show(contentPanel, key);
     }
 }

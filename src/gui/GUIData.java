@@ -7,6 +7,5 @@ public class GUIData {
     public static final int WIDE_BUTTON_W = 180;
     public static final int WIDE_BUTTON_H = 60;
 
-
     public static final int STD_MARGIN = 25;
 }
