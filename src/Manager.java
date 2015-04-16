@@ -1,4 +1,5 @@
 import data.CraigslistUrls;
+import dataHandlers.JSoupAddOn;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -23,12 +24,11 @@ public class Manager {
         parsePages();
     }
 
+    /*  Parses over a Craigslist page and runs until no more pages, or settings
+        defined by user indicate a stop is required. Gathers as much data as
+        possible while doing so. Returns a list of new posts.
+    */
     public void parsePages() {
-        /*  Parses over a Craigslist page and runs until no more pages, or settings
-            defined by user indicate a stop is required. Gathers as much data as
-            possible while doing so. Returns a list of new posts.
-         */
-
         double curTime = System.currentTimeMillis();
         Document doc;
 
@@ -41,32 +41,23 @@ public class Manager {
             // Iterate over whole pages
             while (numEntries == 100) {
                 System.out.println("Scanning Page " + (++i + 1));
-                doc = curSearch.search(i);
+                doc = JSoupAddOn.connect(curSearch.searchUrl(i));
 
                 if (doc != null) {
                     // Gets the number of posts found and isolates
                     // the posts by trimming the document to only them
                     numEntries = doc.select("p.row").size();
                     Elements something = doc.select("div.content");
-                    Element cur_post;
+                    Element curPost;
 
                     // Iterates through all the posts found for the page
                     // Currently just prints all relevant information
                     for (int j = 0; j < numEntries; j++) {
-                        cur_post = something.select("p.row").get(j);
-                        System.out.print(cur_post.select("a.hdrlnk").get(0).text() + " ");          // title
+                        curPost = something.select("p.row").get(j);
+                        doc = JSoupAddOn.connect(curPost.select("a.i").attr("abs:href"));
+                        if (doc != null)
+                            new Post(doc);
 
-                        // Listing the price of the item is not a req. by Craigslist;
-                        // therefore, we must check it is there to prevent a
-                        // IndexOutOfBounds error
-                        if (cur_post.select("span.price").size() > 0)
-                            System.out.println(cur_post.select("span.price").get(0).text());
-                        else
-                            System.out.println("-1");// price
-
-                        System.out.println(cur_post.select("a.i").attr("abs:href"));                // link
-                        System.out.println(cur_post.select("a.hdrlnk").get(0).attr("data-id"));     // data-id
-                        System.out.println("\n");
                     }
                 } else {
                     System.out.println("Could not connect, moving on");

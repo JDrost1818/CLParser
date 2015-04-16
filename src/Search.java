@@ -67,18 +67,4 @@ public class Search {
     public String searchUrl(int page) {
         return searchUrl.replace("!PAGENUMBER!", Integer.toString(page));
     }
-
-    public Document search(int page) {
-        Document doc = null;
-        int numTries = 0;
-        while (numTries < 5 && doc == null) {
-            try {
-                doc = Jsoup.connect(this.searchUrl(page)).get();
-            } catch (IOException e) {
-                System.out.println("Error while trying to connect to URL. Retrying");
-                numTries++;
-            }
-        }
-        return doc;
-    }
 }
