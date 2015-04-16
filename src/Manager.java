@@ -38,10 +38,10 @@ public class Manager {
         }
 
         ArrayList<Post> newPosts = parsePages();
-        this.emailPosts(newPosts);
+        this.emailPosts(this.username, this.password, this.toEmail, newPosts);
     }
 
-    private void emailPosts(ArrayList<Post> newPosts) {
+    private void emailPosts(String user, String pass, String toEmail, ArrayList<Post> newPosts) {
         ArrayList<String> message = new ArrayList<String>();
 
         for (Search curSearch : this.searches) {
@@ -54,9 +54,9 @@ public class Manager {
                                         curPost.link() + "\n");
                 }
             }
+            message.add("\n");
         }
-
-        Email.sendMail(this.username, this.password, this.toEmail, message.toArray(new String[message.size()]));
+        Email.sendMail(user, pass, toEmail, message.toArray(new String[message.size()]));
     }
 
     /*  Parses over a Craigslist page and runs until no more pages, or settings

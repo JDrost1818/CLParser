@@ -1,7 +1,3 @@
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
-import java.io.IOException;
 
 public class Search {
 
@@ -35,7 +31,7 @@ public class Search {
         return match;
     }
 
-    private String generateURL(String _category, String _city, String _match, int _minPrice, int _maxPrice) {
+    private String generateURL(String category, String city, String match, int minPrice, int maxPrice) {
         // Since the base URL of craigslist is defined by the city
         // in which you are looking, it must be defined
         // @TODO make sure the city is a valid one. For example, "Blaine" is not valid
