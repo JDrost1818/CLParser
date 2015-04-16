@@ -7,12 +7,13 @@ import java.util.Properties;
 
 public class Email {
 
-    public static void sendMail(final String username, final String password, String toEmail, String[] msg) {
-        String finalMessage = "";
+    public static void sendMail(String username, String password, String[] toEmails, String msg) {
+        for (String recipient : toEmails) {
+            sendMail(username, password, recipient, msg);
+        }
+    }
 
-        for (String s : msg)
-            finalMessage += s + '\n';
-
+    public static void sendMail(final String username, final String password, String toEmail, String msg) {
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
@@ -31,7 +32,7 @@ public class Email {
             message.setFrom(new InternetAddress(username));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
             message.setSubject("New Craigslist Ads");
-            message.setText(finalMessage);
+            message.setText(msg);
 
             Transport.send(message);
 

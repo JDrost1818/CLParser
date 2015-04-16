@@ -42,21 +42,22 @@ public class Manager {
     }
 
     private void emailPosts(String user, String pass, String toEmail, ArrayList<Post> newPosts) {
-        ArrayList<String> message = new ArrayList<String>();
+        String message = "";
 
         for (Search curSearch : this.searches) {
             // Creates heading for each search category
-            message.add(CraigslistUrls.titleFromKey(curSearch.category()) + "\n\n");
+            message += CraigslistUrls.titleFromKey(curSearch.category()) + "\n\n";
             for (Post curPost : newPosts) {
                 if (curPost.isFromSearch(curSearch)) {
-                    message.add("\t$" + curPost.price() + " - " +
+                    message += "\t$" +  curPost.price() + " - " +
                                         curPost.title() + " " +
-                                        curPost.link() + "\n");
+                                        curPost.link() + "\n";
+                    newPosts.remove(curPost);
                 }
             }
-            message.add("\n");
+            message += "\n";
         }
-        Email.sendMail(user, pass, toEmail, message.toArray(new String[message.size()]));
+        Email.sendMail(user, pass, toEmail, message);
     }
 
     /*  Parses over a Craigslist page and runs until no more pages, or settings
@@ -82,7 +83,10 @@ public class Manager {
                 System.out.println("Scanning Page " + (++i + 1));
                 doc = JSoupAddOn.connect(curSearch.searchUrl(i));
 
-                if (doc != null) {
+                if (doc == null) {
+                    System.out.println("Could not connect, moving on");
+                    break;
+                } else {
                     // Gets the number of posts found and isolates
                     // the posts by trimming the document to only them
                     numEntries = (testing) ? 5 : doc.select("p.row").size();
@@ -93,19 +97,16 @@ public class Manager {
                     // Currently just prints all relevant information
                     for (int j = 0; j < numEntries; j++) {
                         curPost = something.select("p.row").get(j);
-                        doc = JSoupAddOn.connect(curPost.select("a.i").attr("abs:href"));
-                        if (doc != null) {
-                            Post newPost = new Post(curSearch, doc);
-                            if (DATA.alreadyVisited(newPost.id())) {
-                                numAlreadyVisited++;
-                            } else {
-                                newPosts.add(newPost);
-                                DATA.addPage(newPost.id());
+                        if (DATA.alreadyVisited(curPost.attr("data.pid"))) {
+                            numAlreadyVisited++;
+                        } else {
+                            doc = JSoupAddOn.connect(curPost.select("a.i").attr("abs:href"));
+                            if (doc != null) {
+                                newPosts.add(new Post(curSearch, doc));
+                                DATA.addPage(curPost.attr("data.pid"));
                             }
                         }
                     }
-                } else {
-                    System.out.println("Could not connect, moving on");
                 }
             }
         }
