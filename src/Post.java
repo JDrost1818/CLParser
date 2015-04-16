@@ -15,11 +15,6 @@ public class Post {
     private int price = -1;
     private double timePosted;
 
-    // Contact Information
-    private String ownerName;
-    private String phone;
-    private String email;
-
     private boolean haveContacted = false;
 
     public Post(Document post) {
@@ -47,12 +42,5 @@ public class Post {
             price = Integer.parseInt(post.select("span.price").get(0).text().substring(1));
 
         location = post.select("h2.postingtitle").select("small").text().replace("(", "").replace(")", "");
-
-        // This is the link to the html that actually contains the
-        // contact information for the owner of the post.
-        String contactInfoLink = post.select("a#replylink").attr("abs:href");
-        Document contactPost = JSoupAddOn.connect(contactInfoLink);
-        email = contactPost.select("div.anonemail").text();
-        System.out.println(email);
     }
 }
