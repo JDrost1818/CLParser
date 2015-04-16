@@ -9,6 +9,8 @@ public class Search {
     private int minPrice;
     private int maxPrice;
 
+    private String visitedIds = "";
+
     public Search(String _category, String _city, String _match) {
         this(_category, _city, _match, -1, -1);
     }
@@ -62,5 +64,13 @@ public class Search {
 
     public String searchUrl(int page) {
         return searchUrl.replace("!PAGENUMBER!", Integer.toString(100*(page-1)));
+    }
+
+    public boolean alreadyVisited(String postId) {
+        return visitedIds.contains(postId);
+    }
+
+    public void addPage(String postId) {
+        visitedIds += postId + " ";
     }
 }
