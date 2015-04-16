@@ -1,4 +1,5 @@
 import data.CraigslistUrls;
+import objects.Search;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

@@ -1,6 +1,10 @@
+package main;
+
 import data.CraigslistUrls;
 import dataHandlers.Email;
 import dataHandlers.JSoupAddOn;
+import objects.Post;
+import objects.Search;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -19,13 +23,11 @@ public class Manager {
         app.run(args);
     }
 
-    private Search[] searches;
+    private ArrayList<Search> searches = new ArrayList<Search>();
 
     public Manager() {
-        searches = new Search[] {
-                new Search(CraigslistUrls.VIDEO_GAMING.owner(), "minneapolis", "XBOX ONE"),
-                new Search(CraigslistUrls.ELECTRONICS.owner(), "minneapolis", "TV -projection")
-        };
+        addSearch(new Search(CraigslistUrls.VIDEO_GAMING.owner(), "minneapolis", "XBOX ONE"));
+        addSearch(new Search(CraigslistUrls.ELECTRONICS.owner(), "minneapolis", "TV -projection"));
     }
 
     public void run(String[] args) {
@@ -61,11 +63,15 @@ public class Manager {
         Email.sendMail(user, pass, toEmail, message);
     }
 
+    public void addSearch(Search newSearch) {
+        searches.add(newSearch);
+    }
+
     /*  Parses over a Craigslist page and runs until no more pages, or settings
         defined by user indicate a stop is required. Gathers as much data as
         possible while doing so. Returns a list of new posts.
     */
-    public ArrayList<Post> parsePages(Search[] searches) {
+    public ArrayList<Post> parsePages(ArrayList<Search> searches) {
         double curTime = System.currentTimeMillis();
 
         ArrayList<Post> newPosts = new ArrayList<Post>();

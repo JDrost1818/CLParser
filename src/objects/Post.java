@@ -1,5 +1,5 @@
-import dataHandlers.JSoupAddOn;
-import org.jsoup.nodes.Document;
+package objects;
+
 import org.jsoup.nodes.Element;
 
 public class Post {
