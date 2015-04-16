@@ -1,5 +1,6 @@
 import dataHandlers.JSoupAddOn;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 public class Post {
 
@@ -19,14 +20,17 @@ public class Post {
 
     private boolean haveContacted = false;
 
-    public Post(Search _search, Document post) {
+    /*
+        This does not set description
+     */
+    public Post(Search _search, Element post) {
         search = _search;
 
-        title = JSoupAddOn.getMetaTag(post, "og:title");
-        description = JSoupAddOn.getMetaTag(post, "og:description");
-        link = JSoupAddOn.getMetaTag(post, "og:url");
+        title = post.select("a.hdrlnk").text();
+        postId = post.attr("data-pid");
 
         // Gets county, category, postId (all from URL)
+        link = post.select("a.i").get(0).attr("abs:href");
         if (link != null) {
             // If this ever causes a IndexOutOfRange error,
             // I would be amazed. Never should happen.
@@ -45,7 +49,7 @@ public class Post {
         if (post.select("span.price").size() > 0)
             price = Integer.parseInt(post.select("span.price").get(0).text().substring(1));
 
-        location = post.select("h2.postingtitle").select("small").text().replace("(", "").replace(")", "");
+        location = post.select("span.pnr").select("small").text().replace("(", "").replace(")", "");
     }
 
     public String title() {
@@ -58,6 +62,11 @@ public class Post {
 
     public String id() {
         return this.postId;
+    }
+
+    @Override
+    public String toString() {
+        return "$" + price + " " + title + " " + link;
     }
 
     public int price() {

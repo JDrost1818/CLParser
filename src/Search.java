@@ -61,6 +61,6 @@ public class Search {
     }
 
     public String searchUrl(int page) {
-        return searchUrl.replace("!PAGENUMBER!", Integer.toString(page));
+        return searchUrl.replace("!PAGENUMBER!", Integer.toString(100*(page-1)));
     }
 }
