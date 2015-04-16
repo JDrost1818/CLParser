@@ -26,8 +26,8 @@ public class Manager {
     private ArrayList<Search> searches = new ArrayList<Search>();
 
     public Manager() {
-        addSearch(new Search(CraigslistUrls.VIDEO_GAMING.owner(), "minneapolis", "XBOX ONE"));
-        addSearch(new Search(CraigslistUrls.ELECTRONICS.owner(), "minneapolis", "TV -projection"));
+        addSearch(new Search(CraigslistUrls.VIDEO_GAMING.owner(), "minneapolis", "XBOX ONE", ""));
+        addSearch(new Search(CraigslistUrls.ELECTRONICS.owner(), "minneapolis", "TV", "Projection"));
     }
 
     public void run(String[] args) {

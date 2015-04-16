@@ -5,6 +5,8 @@ public class Search {
     private String category;
     private String city;
     private String match;
+    private String exclusions;
+    private String fullSearch;
     private String searchUrl;
 
     private int minPrice;
@@ -12,18 +14,21 @@ public class Search {
 
     private String visitedIds = "";
 
-    public Search(String _category, String _city, String _match) {
-        this(_category, _city, _match, -1, -1);
+    public Search(String _category, String _city, String _match, String _exclusions) {
+        this(_category, _city, _match, _exclusions, -1, -1);
     }
 
-    public Search(String _category, String _city, String _match, int _minPrice, int _maxPrice) {
+    public Search(String _category, String _city, String _match, String _exclusions, int _minPrice, int _maxPrice) {
         category = _category;
         city = _city;
         match = _match;
+        exclusions = _exclusions;
         minPrice = _minPrice;
         maxPrice = _maxPrice;
 
-        searchUrl = generateURL(category, city, match, minPrice, maxPrice);
+        fullSearch = joinMatchAndExclusions(match, exclusions);
+
+        searchUrl = generateURL(category, city, fullSearch, minPrice, maxPrice);
     }
 
     public String category() {
@@ -34,7 +39,30 @@ public class Search {
         return match;
     }
 
-    private String generateURL(String category, String city, String match, int minPrice, int maxPrice) {
+    public String exclusions() {
+        return exclusions;
+    }
+
+    public int minPrice() {
+        return minPrice;
+    }
+
+    public int maxPrice() {
+        return maxPrice;
+    }
+
+    private String joinMatchAndExclusions(String matches, String exclusions) {
+        String joined = matches;
+        if (exclusions != null && !(exclusions.equals(""))) {
+            String[] exclusionWords = exclusions.split(" ");
+            for (String exclusion : exclusionWords) {
+                joined += " -" + exclusion;
+            }
+        }
+        return joined;
+    }
+
+    private String generateURL(String category, String city, String full_search, int minPrice, int maxPrice) {
         // Since the base URL of craigslist is defined by the city
         // in which you are looking, it must be defined
         // @TODO make sure the city is a valid one. For example, "Blaine" is not valid
@@ -50,11 +78,11 @@ public class Search {
             url += "maxAsk=" + maxPrice + "&";
 
         // Creates the query aspect of the URL
-        if (match == null || match.equals("")) {
+        if (full_search == null || full_search.equals("")) {
             url += "s=!PAGENUMBER!";
         } else {
             url += "s=!PAGENUMBER!&query=";
-            for (String word : match.split(" ")) {
+            for (String word : full_search.split(" ")) {
                 url += word + "%20";
             }
             url = url.substring(0, url.length()-3);

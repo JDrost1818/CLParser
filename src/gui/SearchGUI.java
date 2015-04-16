@@ -14,20 +14,35 @@ import java.awt.event.MouseEvent;
 
 public class SearchGUI extends JPanel {
 
-    private CardLayout contentPanelLayout = new CardLayout();
-
     private Main controller;
 
-    private String keywordHoldingText = "Keywords";
-    private String excludeWordHoldingText = "Excluded Words";
+    private CardLayout contentPanelLayout = new CardLayout();
+
+    private String DEFAULT_KEYWORDS_HOLD = "Keywords";
+    private String DEFAULT_EXCLUDE_HOLD = "Excluded Words";
+    private String DEFAULT_MIN_PRICE_HOLD = "";
+    private String DEFAULT_MAX_PRICE_HOLD = "";
+    private String DEFAULT_CREATE_TITLE = "Create Search";
+    private String DEFAULT_EDIT_TITLE = "Edit Search";
+    private String BUTTON_CREATE_TITLE = "Search";
+    private String BUTTON_EDIT_TITLE = "Edit";
+
+
     private JPanel contentPanel;
+
+    private SimpleLabel title;
+    private SimpleTextField keywordEntry;
+    private SimpleTextField excludedWordsEntry;
+    private SimpleTextField minPriceEntry;
+    private SimpleTextField maxPriceEntry;
+    SimpleButton button;
 
     public SearchGUI(Main _controller, Container parent) {
         this.controller = _controller;
         this.setSize(parent.getSize());
 
         // Title
-        SimpleLabel title = new SimpleLabel("Create Search");
+        title = new SimpleLabel(DEFAULT_CREATE_TITLE);
         title.setBounds(GUIData.STD_MARGIN, GUIData.STD_MARGIN/2, title.getWidth(), title.getHeight());
         title.setFont(title.getFont().deriveFont(GUIData.HEADER_FONT_SIZE));
         title.autoSize();
@@ -46,12 +61,7 @@ public class SearchGUI extends JPanel {
         // "Create Search" card
         contentPanel.add("create", buildCreateCard(contentPanel));
 
-        // "Edit Search" card
-        JPanel editSearchPanel = new JPanel(null);
-        contentPanel.add("edit", editSearchPanel);
-
-        display("create");
-
+        setToCreate();
     }
 
     public JPanel buildCreateCard(Container parent) {
@@ -72,7 +82,7 @@ public class SearchGUI extends JPanel {
         createSearchPanel.add(excludeLabel);
 
         // Textfield where user can enter words to ignore during search
-        final SimpleTextField excludedWordsEntry = new SimpleTextField(excludeWordHoldingText);
+        excludedWordsEntry = new SimpleTextField(DEFAULT_EXCLUDE_HOLD);
         excludedWordsEntry.setBounds(
                 GUIData.STD_MARGIN + excludeLabel.getWidth(),
                 excludeLabel.getY(),
@@ -81,7 +91,7 @@ public class SearchGUI extends JPanel {
         createSearchPanel.add(excludedWordsEntry);
 
         // Textfield where user can enter words to look for during search
-        final SimpleTextField keywordEntry = new SimpleTextField(keywordHoldingText);
+        keywordEntry = new SimpleTextField(DEFAULT_KEYWORDS_HOLD);
         keywordEntry.setBounds(
                 excludedWordsEntry.getX(),
                 keywordLabel.getY(),
@@ -98,7 +108,7 @@ public class SearchGUI extends JPanel {
         createSearchPanel.add(minPriceLabel);
 
         // Textfield where user can enter words to look for during search
-        final SimpleTextField minPriceEntry = new SimpleTextField("");
+        minPriceEntry = new SimpleTextField(DEFAULT_MIN_PRICE_HOLD);
         minPriceEntry.setBounds(
                 minPriceLabel.getX() + minPriceLabel.getWidth() + (int)(.25 * GUIData.STD_MARGIN),
                 minPriceLabel.getY(),
@@ -116,7 +126,7 @@ public class SearchGUI extends JPanel {
         createSearchPanel.add(maxPriceLabel);
 
         // Textfield where user can enter words to look for during search
-        final SimpleTextField maxPriceEntry = new SimpleTextField("");
+        maxPriceEntry = new SimpleTextField(DEFAULT_MAX_PRICE_HOLD);
         maxPriceEntry.setBounds(
                 maxPriceLabel.getX() + maxPriceLabel.getWidth() + (int)(.25 * GUIData.STD_MARGIN),
                 maxPriceLabel.getY(),
@@ -125,54 +135,77 @@ public class SearchGUI extends JPanel {
         createSearchPanel.add(maxPriceEntry);
 
         // Takes all input and creates the search object and searches on it
-        SimpleButton createButton = new SimpleButton("Search", DATA.COLORS.LIGHT_BLUE, true);
-        createButton.setActiveForeground(Color.white);
-        createButton.setBounds(
+        button = new SimpleButton(BUTTON_CREATE_TITLE, DATA.COLORS.LIGHT_BLUE, true);
+        button.setActiveForeground(Color.white);
+        button.setBounds(
                 (createSearchPanel.getWidth() / 2) - (GUIData.WIDE_BUTTON_W / 2),
                 createSearchPanel.getHeight() - (GUIData.WIDE_BUTTON_H + GUIData.STD_MARGIN),
                 GUIData.WIDE_BUTTON_W,
                 GUIData.WIDE_BUTTON_H);
-        createButton.addMouseListener(new MouseAdapter() {
+        button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 // Gets and creates the search string
-                String search = keywordEntry.getText() + " ";
-                String[] exclusions = excludedWordsEntry.getText().split(" ");
-                for (String exclusion : exclusions) {
-                    search += "-" + exclusion + " ";
-                }
+                if (button.getText().equals("Edit")) {
+                    // this will do something else
+                } else {
 
-                // gets the price
-                int minPrice = -1, maxPrice = -1;
-                if (!minPriceEntry.getText().equals("")) {
-                    try {
-                        minPrice = Integer.parseInt(minPriceEntry.getText());
-                    } catch (NumberFormatException nfe) {
-                        // @TODO handle this by notifying user
-                    }
-                }
-                if (!maxPriceEntry.getText().equals("")) {
-                    try {
-                        maxPrice = Integer.parseInt(maxPriceEntry.getText());
-                    } catch (NumberFormatException nfe) {
-                        // @TODO handle this by notifying user
-                    }
-                }
+                    // Sets to what is found at the entry points; however, if what
+                    // is found is the default (ie the user did not enter anything),
+                    // sets to the empty string
+                    String search = keywordEntry.getText().equals(DEFAULT_KEYWORDS_HOLD) ? "" : keywordEntry.getText();
+                    String exclusion = excludedWordsEntry.getText().equals(DEFAULT_EXCLUDE_HOLD) ? "" : excludedWordsEntry.getText();
 
-                // Creates search, saves if requested, and runs the search
-                Search newSearch = new Search(CraigslistUrls.ALL.owner(), "Minneapolis", search, minPrice, maxPrice);
-                int reply = JOptionPane.showConfirmDialog(null, "Would you like to save this\nsearch for later use?", "", JOptionPane.YES_NO_OPTION);
-                if (reply == JOptionPane.YES_OPTION)
-                    controller.addSearch(newSearch);
-                controller.search(newSearch);
+                    // gets the price
+                    int minPrice = -1, maxPrice = -1;
+                    if (!minPriceEntry.getText().equals("")) {
+                        try {
+                            minPrice = Integer.parseInt(minPriceEntry.getText());
+                        } catch (NumberFormatException nfe) {
+                            // @TODO handle this by notifying user
+                        }
+                    }
+                    if (!maxPriceEntry.getText().equals("")) {
+                        try {
+                            maxPrice = Integer.parseInt(maxPriceEntry.getText());
+                        } catch (NumberFormatException nfe) {
+                            // @TODO handle this by notifying user
+                        }
+                    }
+
+                    // Creates search, saves if requested, and runs the search
+                    Search newSearch = new Search(CraigslistUrls.ALL.owner(), "Minneapolis", search, exclusion, minPrice, maxPrice);
+                    int reply = JOptionPane.showConfirmDialog(null, "Would you like to save this\nsearch for later use?", "", JOptionPane.YES_NO_OPTION);
+                    if (reply == JOptionPane.YES_OPTION)
+                        controller.addSearch(newSearch);
+                    controller.search(newSearch);
+                }
             }
         });
-        createSearchPanel.add(createButton);
+        createSearchPanel.add(button);
 
         return createSearchPanel;
     }
 
-    public void display(String key) {
-        contentPanelLayout.show(contentPanel, key);
+    public void setToCreate() {
+        title.setText(DEFAULT_CREATE_TITLE);
+        keywordEntry.setText(DEFAULT_KEYWORDS_HOLD);
+        excludedWordsEntry.setText(DEFAULT_EXCLUDE_HOLD);
+        minPriceEntry.setText(DEFAULT_MIN_PRICE_HOLD);
+        maxPriceEntry.setText(DEFAULT_MAX_PRICE_HOLD);
+        button.setText(BUTTON_CREATE_TITLE);
+
+        contentPanelLayout.show(contentPanel, "create");
+    }
+
+    public void setToEdit(Search search) {
+        title.setText(DEFAULT_EDIT_TITLE);
+        keywordEntry.setText(search.match());
+        excludedWordsEntry.setText(search.exclusions());
+        minPriceEntry.setText((search.minPrice() == -1) ? "" : Integer.toString(search.minPrice()));
+        maxPriceEntry.setText((search.maxPrice() == -1) ? "" : Integer.toString(search.maxPrice()));
+        button.setText(BUTTON_EDIT_TITLE);
+
+        contentPanelLayout.show(contentPanel, "create");
     }
 }

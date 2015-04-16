@@ -14,10 +14,10 @@ public class ObjectTests {
 
     @Test
     public void searchValidURLsTest() {
-        Search search1 = new Search(CraigslistUrls.ALL.owner(), "minneapolis", null);
-        Search search2 = new Search(CraigslistUrls.ALL.owner(), "minneapolis", "Xbox One -games");
-        Search search3 = new Search(CraigslistUrls.ALL.owner(), "minneapolis", "Xbox One -games", 100, -1);
-        Search search4 = new Search(CraigslistUrls.ALL.owner(), "minneapolis", "Xbox One -games", 100, 200);
+        Search search1 = new Search(CraigslistUrls.ALL.owner(), "minneapolis", "", "");
+        Search search2 = new Search(CraigslistUrls.ALL.owner(), "minneapolis", "Xbox One", "games");
+        Search search3 = new Search(CraigslistUrls.ALL.owner(), "minneapolis", "Xbox One", "games", 100, -1);
+        Search search4 = new Search(CraigslistUrls.ALL.owner(), "minneapolis", "Xbox One", "games", 100, 200);
 
         assertEquals(search1.searchUrl(1), "http://minneapolis.craigslist.org/search/sso?s=0");
         assertEquals(search2.searchUrl(2), "http://minneapolis.craigslist.org/search/sso?s=100&query=Xbox%20One%20-games");
@@ -28,7 +28,7 @@ public class ObjectTests {
     @Test
     public void postConstrutorTest() throws IOException {
         Post curPost;
-        Search dummySearch = new Search("cat", "city", "match", -1, -1);
+        Search dummySearch = new Search("cat", "city", "match", "exclusion", -1, -1);
         String dir = System.getProperty("user.dir") + "\\test\\resources";
 
         // Tests to make sure a valid Post is created
