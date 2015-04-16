@@ -1,8 +1,11 @@
 import data.CraigslistUrls;
+import data.DATA;
 import dataHandlers.JSoupAddOn;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import java.util.ArrayList;
 
 public class Manager {
 
@@ -14,6 +17,7 @@ public class Manager {
     }
 
     private Search[] searches;
+    private ArrayList<Post> newPosts = new ArrayList<Post>();
 
     public Manager() {
         searches = new Search[] {
@@ -34,14 +38,16 @@ public class Manager {
         double curTime = System.currentTimeMillis();
         Document doc;
 
-        int i, numEntries;
+        int i, numEntries, numAlreadyVisited=0;
 
         for (Search curSearch : this.searches) {
             // Reset variables
             i = -1; numEntries = 100;
 
             // Iterate over whole pages
-            while (numEntries == 100) {
+            while (numEntries == 100 && numAlreadyVisited < 25) {
+                numAlreadyVisited = 0;
+
                 System.out.println("Scanning Page " + (++i + 1));
                 doc = JSoupAddOn.connect(curSearch.searchUrl(i));
 
@@ -57,8 +63,15 @@ public class Manager {
                     for (int j = 0; j < numEntries; j++) {
                         curPost = something.select("p.row").get(j);
                         doc = JSoupAddOn.connect(curPost.select("a.i").attr("abs:href"));
-                        if (doc != null)
-                            new Post(doc);
+                        if (doc != null) {
+                            Post newPost = new Post(doc);
+                            if (DATA.alreadyVisited(newPost.id())) {
+                                numAlreadyVisited++;
+                            } else {
+                                newPosts.add(newPost);
+                                DATA.addPage(newPost.id());
+                            }
+                        }
                     }
                 } else {
                     System.out.println("Could not connect, moving on");

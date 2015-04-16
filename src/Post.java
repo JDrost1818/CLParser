@@ -43,4 +43,8 @@ public class Post {
 
         location = post.select("h2.postingtitle").select("small").text().replace("(", "").replace(")", "");
     }
+
+    public String id() {
+        return this.postId;
+    }
 }
