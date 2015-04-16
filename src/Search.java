@@ -44,7 +44,7 @@ public class Search {
 
         String url;
         // Sets base of the URL along with the min and max prices if set
-        url = "https://" + city + ".craigslist.org/search/" + category + "?";
+        url = "http://" + city + ".craigslist.org/search/" + category + "?";
         if (minPrice != -1)
             url += "minAsk=" + minPrice + "&";
         if (maxPrice != -1)
