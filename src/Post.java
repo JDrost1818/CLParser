@@ -15,9 +15,13 @@ public class Post {
     private int price = -1;
     private double timePosted;
 
+    private Search search;
+
     private boolean haveContacted = false;
 
-    public Post(Document post) {
+    public Post(Search _search, Document post) {
+        search = _search;
+
         title = JSoupAddOn.getMetaTag(post, "og:title");
         description = JSoupAddOn.getMetaTag(post, "og:description");
         link = JSoupAddOn.getMetaTag(post, "og:url");
@@ -44,7 +48,23 @@ public class Post {
         location = post.select("h2.postingtitle").select("small").text().replace("(", "").replace(")", "");
     }
 
+    public String title() {
+        return this.title;
+    }
+
+    public String link() {
+        return this.link;
+    }
+
     public String id() {
         return this.postId;
+    }
+
+    public int price() {
+        return this.price;
+    }
+
+    public boolean isFromSearch(Search potSearch) {
+        return potSearch == search;
     }
 }

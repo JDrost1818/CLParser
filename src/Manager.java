@@ -1,5 +1,6 @@
 import data.CraigslistUrls;
 import data.DATA;
+import data.Email;
 import dataHandlers.JSoupAddOn;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -9,15 +10,17 @@ import java.util.ArrayList;
 
 public class Manager {
 
-    private boolean testing = true;
+    private boolean testing = false;
+    private String username = "";
+    private String password = "";
+    private String toEmail = "";
 
     public static void main(String[] args) {
         Manager app = new Manager();
-        app.run();
+        app.run(args);
     }
 
     private Search[] searches;
-    private ArrayList<Post> newPosts = new ArrayList<Post>();
 
     public Manager() {
         searches = new Search[] {
@@ -26,16 +29,44 @@ public class Manager {
         };
     }
 
-    public void run() {
-        parsePages();
+    public void run(String[] args) {
+        if (args.length > 0) {
+            testing = true;
+            username = args[0];
+            password = args[1];
+            toEmail = args[2];
+        }
+
+        ArrayList<Post> newPosts = parsePages();
+        this.emailPosts(newPosts);
+    }
+
+    private void emailPosts(ArrayList<Post> newPosts) {
+        ArrayList<String> message = new ArrayList<String>();
+
+        for (Search curSearch : this.searches) {
+            // Creates heading for each search category
+            message.add(CraigslistUrls.titleFromKey(curSearch.category()) + "\n\n");
+            for (Post curPost : newPosts) {
+                if (curPost.isFromSearch(curSearch)) {
+                    message.add("\t$" + curPost.price() + " - " +
+                                        curPost.title() + " " +
+                                        curPost.link() + "\n");
+                }
+            }
+        }
+
+        Email.sendMail(this.username, this.password, this.toEmail, message.toArray(new String[message.size()]));
     }
 
     /*  Parses over a Craigslist page and runs until no more pages, or settings
         defined by user indicate a stop is required. Gathers as much data as
         possible while doing so. Returns a list of new posts.
     */
-    public void parsePages() {
+    public ArrayList<Post> parsePages() {
         double curTime = System.currentTimeMillis();
+
+        ArrayList<Post> newPosts = new ArrayList<Post>();
         Document doc;
 
         int i, numEntries, numAlreadyVisited=0;
@@ -64,7 +95,7 @@ public class Manager {
                         curPost = something.select("p.row").get(j);
                         doc = JSoupAddOn.connect(curPost.select("a.i").attr("abs:href"));
                         if (doc != null) {
-                            Post newPost = new Post(doc);
+                            Post newPost = new Post(curSearch, doc);
                             if (DATA.alreadyVisited(newPost.id())) {
                                 numAlreadyVisited++;
                             } else {
@@ -79,5 +110,6 @@ public class Manager {
             }
         }
         System.out.println("Process took " + (System.currentTimeMillis() - curTime) / 1000 + " seconds");
+        return newPosts;
     }
 }
