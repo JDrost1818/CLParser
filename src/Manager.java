@@ -6,6 +6,8 @@ import org.jsoup.select.Elements;
 
 public class Manager {
 
+    private boolean testing = true;
+
     public static void main(String[] args) {
         Manager app = new Manager();
         app.run();
@@ -46,7 +48,7 @@ public class Manager {
                 if (doc != null) {
                     // Gets the number of posts found and isolates
                     // the posts by trimming the document to only them
-                    numEntries = doc.select("p.row").size();
+                    numEntries = (testing) ? 5 : doc.select("p.row").size();
                     Elements something = doc.select("div.content");
                     Element curPost;
 
@@ -57,7 +59,6 @@ public class Manager {
                         doc = JSoupAddOn.connect(curPost.select("a.i").attr("abs:href"));
                         if (doc != null)
                             new Post(doc);
-
                     }
                 } else {
                     System.out.println("Could not connect, moving on");
