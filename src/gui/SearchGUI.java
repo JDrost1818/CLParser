@@ -13,7 +13,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class SearchGUI extends JPanel {
+public class SearchGUI extends JPanel implements iCompressible {
 
     private Main controller;
 
@@ -36,7 +36,14 @@ public class SearchGUI extends JPanel {
     private SimpleTextField excludedWordsEntry;
     private SimpleTextField minPriceEntry;
     private SimpleTextField maxPriceEntry;
-    SimpleButton button;
+    private SimpleButton button;
+
+    private SimpleLabel keywordLabel;
+    private SimpleLabel excludeLabel;
+    private SimpleLabel minPriceLabel;
+    private SimpleLabel maxPriceLabel;
+
+    private JPanel createSearchPanel;
 
     public SearchGUI(Main _controller, Container parent) {
         this.controller = _controller;
@@ -59,6 +66,7 @@ public class SearchGUI extends JPanel {
                 GUIData.STD_MARGIN + title.getHeight(),
                 parent.getWidth() - (2 * GUIData.STD_MARGIN),
                 parent.getHeight() - (title.getHeight() + 2 * GUIData.STD_MARGIN));
+        contentPanel.setBackground(parent.getBackground());
         add(contentPanel);
 
         // "Create Search" card
@@ -68,84 +76,47 @@ public class SearchGUI extends JPanel {
     }
 
     public JPanel buildCreateCard(Container parent) {
-        JPanel createSearchPanel = new JPanel(null);
+        createSearchPanel = new JPanel(null);
         createSearchPanel.setBounds(0 ,0, parent.getWidth(), parent.getHeight());
+        System.out.println(createSearchPanel.getX() + " " + createSearchPanel.getWidth());
         createSearchPanel.setBorder(new LineBorder(DATA.COLORS.BORDER_COLOR));
         createSearchPanel.setBackground(Color.WHITE);
 
         // Holds text telling user what the keyword text field is for
-        SimpleLabel keywordLabel = new SimpleLabel("Enter Keywords: ");
-        keywordLabel.setBounds(GUIData.STD_MARGIN, 2 * GUIData.STD_MARGIN,
-                keywordLabel.getWidth(), keywordLabel.getHeight());
+        keywordLabel = new SimpleLabel("Enter Keywords: ");
         createSearchPanel.add(keywordLabel);
 
         // Holds text telling user what the exclude text field is for
-        SimpleLabel excludeLabel = new SimpleLabel("Words to Exclude: ");
-        excludeLabel.setBounds(keywordLabel.getX(), keywordLabel.getY() + keywordLabel.getHeight() + (int) (.75 * GUIData.STD_MARGIN),
-                excludeLabel.getWidth(), keywordLabel.getHeight());
+        excludeLabel = new SimpleLabel("Words to Exclude: ");
         createSearchPanel.add(excludeLabel);
 
         // Textfield where user can enter words to ignore during search
         excludedWordsEntry = new SimpleTextField(DEFAULT_EXCLUDE_HOLD);
-        excludedWordsEntry.setBounds(
-                GUIData.STD_MARGIN + excludeLabel.getWidth(),
-                excludeLabel.getY(),
-                createSearchPanel.getWidth() - (2 * GUIData.STD_MARGIN + excludeLabel.getWidth()),
-                (int) GUIData.HEADER_FONT_SIZE + 10);
         createSearchPanel.add(excludedWordsEntry);
 
         // Textfield where user can enter words to look for during search
         keywordEntry = new SimpleTextField(DEFAULT_KEYWORDS_HOLD);
-        keywordEntry.setBounds(
-                excludedWordsEntry.getX(),
-                keywordLabel.getY(),
-                excludedWordsEntry.getWidth(),
-                (int) GUIData.HEADER_FONT_SIZE + 10);
         createSearchPanel.add(keywordEntry);
 
         // Holds text telling user what the min text field is for
-        SimpleLabel minPriceLabel = new SimpleLabel("Min Price: ");
-        minPriceLabel.setBounds(
-                GUIData.STD_MARGIN,
-                excludeLabel.getY() + excludeLabel.getHeight() + (int) (.9 * GUIData.STD_MARGIN),
-                minPriceLabel.getWidth(), minPriceLabel.getHeight());
+        minPriceLabel = new SimpleLabel("Min Price: ");
         createSearchPanel.add(minPriceLabel);
 
         // Textfield where user can enter words to look for during search
         minPriceEntry = new SimpleTextField(DEFAULT_MIN_PRICE_HOLD);
-        minPriceEntry.setBounds(
-                minPriceLabel.getX() + minPriceLabel.getWidth() + (int)(.25 * GUIData.STD_MARGIN),
-                minPriceLabel.getY(),
-                75,
-                minPriceLabel.getHeight());
         createSearchPanel.add(minPriceEntry);
 
         // Holds text telling user what the max text field is for
-        SimpleLabel maxPriceLabel = new SimpleLabel("Max Price: ");
-        maxPriceLabel.setBounds(
-                minPriceEntry.getX() + minPriceEntry.getWidth() + GUIData.STD_MARGIN,
-                minPriceEntry.getY(),
-                maxPriceLabel.getWidth(),
-                maxPriceLabel.getHeight());
+        maxPriceLabel = new SimpleLabel("Max Price: ");
         createSearchPanel.add(maxPriceLabel);
 
         // Textfield where user can enter words to look for during search
         maxPriceEntry = new SimpleTextField(DEFAULT_MAX_PRICE_HOLD);
-        maxPriceEntry.setBounds(
-                maxPriceLabel.getX() + maxPriceLabel.getWidth() + (int)(.25 * GUIData.STD_MARGIN),
-                maxPriceLabel.getY(),
-                75,
-                maxPriceLabel.getHeight());
         createSearchPanel.add(maxPriceEntry);
 
         // Takes all input and creates the search object and searches on it
         button = new SimpleButton("hello World", DATA.COLORS.LIGHT_BLUE, true);
         button.setActiveForeground(Color.white);
-        button.setBounds(
-                (createSearchPanel.getWidth() / 2) - (GUIData.WIDE_BUTTON_W / 2),
-                createSearchPanel.getHeight() - (GUIData.WIDE_BUTTON_H + GUIData.STD_MARGIN),
-                GUIData.WIDE_BUTTON_W,
-                GUIData.WIDE_BUTTON_H);
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -186,6 +157,7 @@ public class SearchGUI extends JPanel {
             }
         });
         createSearchPanel.add(button);
+        updateComponentLocations();
 
         return createSearchPanel;
     }
@@ -210,5 +182,81 @@ public class SearchGUI extends JPanel {
         button.setText(BUTTON_EDIT_TITLE);
 
         contentPanelLayout.show(contentPanel, "create");
+    }
+
+    @Override
+    public void shrink(int numPixels, int stopPosition) {
+        createSearchPanel.setBounds(
+                createSearchPanel.getX(),
+                createSearchPanel.getY(),
+                createSearchPanel.getWidth() - numPixels,
+                createSearchPanel.getHeight());
+        updateComponentLocations();
+    }
+
+    @Override
+    public void expand(int numPixels, int stopPosition) {
+        createSearchPanel.setBounds(
+                createSearchPanel.getX(),
+                createSearchPanel.getY(),
+                createSearchPanel.getWidth() + numPixels,
+                createSearchPanel.getHeight());
+        updateComponentLocations();
+    }
+
+    public void updateComponentLocations() {
+        keywordLabel.setBounds(
+                GUIData.STD_MARGIN,
+                GUIData.STD_MARGIN * 2,
+                keywordLabel.getWidth(),
+                keywordLabel.getHeight());
+
+        excludeLabel.setBounds(
+                keywordLabel.getX(),
+                keywordLabel.getY() + keywordLabel.getHeight() + (int) (.75 * GUIData.STD_MARGIN),
+                excludeLabel.getWidth(),
+                keywordLabel.getHeight());
+
+        excludedWordsEntry.setBounds(
+                GUIData.STD_MARGIN + excludeLabel.getWidth(),
+                excludeLabel.getY(),
+                createSearchPanel.getWidth() - (2 * GUIData.STD_MARGIN + excludeLabel.getWidth()),
+                (int) GUIData.HEADER_FONT_SIZE + 10);
+
+        keywordEntry.setBounds(
+                excludedWordsEntry.getX(),
+                keywordLabel.getY(),
+                excludedWordsEntry.getWidth(),
+                (int) GUIData.HEADER_FONT_SIZE + 10);
+
+        minPriceLabel.setBounds(
+                GUIData.STD_MARGIN,
+                excludeLabel.getY() + excludeLabel.getHeight() + (int) (.9 * GUIData.STD_MARGIN),
+                minPriceLabel.getWidth(),
+                minPriceLabel.getHeight());
+
+        minPriceEntry.setBounds(
+                minPriceLabel.getX() + minPriceLabel.getWidth() + (int)(.25 * GUIData.STD_MARGIN),
+                minPriceLabel.getY(),
+                75,
+                minPriceLabel.getHeight());
+
+        maxPriceLabel.setBounds(
+                minPriceEntry.getX() + minPriceEntry.getWidth() + GUIData.STD_MARGIN,
+                minPriceEntry.getY(),
+                maxPriceLabel.getWidth(),
+                maxPriceLabel.getHeight());
+
+        maxPriceEntry.setBounds(
+                maxPriceLabel.getX() + maxPriceLabel.getWidth() + (int)(.25 * GUIData.STD_MARGIN),
+                maxPriceLabel.getY(),
+                75,
+                maxPriceLabel.getHeight());
+
+        button.setBounds(
+                (createSearchPanel.getWidth() / 2) - (GUIData.WIDE_BUTTON_W / 2),
+                createSearchPanel.getHeight() - (GUIData.WIDE_BUTTON_H + GUIData.STD_MARGIN),
+                GUIData.WIDE_BUTTON_W,
+                GUIData.WIDE_BUTTON_H);
     }
 }
