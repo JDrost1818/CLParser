@@ -37,17 +37,25 @@ public class Manager {
             password = args[1];
             toEmail = args[2];
         }
-
-        ArrayList<Post> newPosts = parsePages(this.searches);
-
-        if (newPosts.size() > 0 && !username.equals(""))
-            this.emailPosts(this.username, this.password, this.toEmail, newPosts);
+        singleSearch(this.searches);
     }
 
-    private void emailPosts(String user, String pass, String toEmail, ArrayList<Post> newPosts) {
-        String message = "";
+    public void login(String _username, String _password) {
+        this.username =_username;
+        this.password = _password;
+        this.toEmail = username;
+    }
 
-        for (Search curSearch : this.searches) {
+    public void singleSearch(ArrayList<Search> searches) {
+        ArrayList<Post> newPosts = parsePages(searches);
+
+        if (newPosts.size() > 0 && !username.equals(""))
+            this.emailPosts(this.username, this.password, this.toEmail, searches, newPosts);
+    }
+
+    private void emailPosts(String user, String pass, String toEmail, ArrayList<Search> searches, ArrayList<Post> newPosts) {
+        String message = "";
+        for (Search curSearch : searches) {
             // Creates heading for each search category
             message += CraigslistUrls.titleFromKey(curSearch.category()) + "\n\n";
             for (Post curPost : newPosts) {
@@ -115,7 +123,6 @@ public class Manager {
             }
         }
         System.out.println("Process took " + (System.currentTimeMillis() - curTime) / 1000 + " seconds");
-        System.out.println(newPosts.get(1));
         return newPosts;
     }
 }

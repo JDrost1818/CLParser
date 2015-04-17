@@ -8,6 +8,7 @@ import simplestructures.SimpleLabel;
 import simplestructures.SimpleTextField;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -41,6 +42,9 @@ public class SearchGUI extends JPanel {
         this.controller = _controller;
         this.setSize(parent.getSize());
 
+        setBackground(parent.getBackground());
+        setLayout(null);
+
         // Title
         title = new SimpleLabel(DEFAULT_CREATE_TITLE);
         title.setBounds(GUIData.STD_MARGIN, GUIData.STD_MARGIN/2, title.getWidth(), title.getHeight());
@@ -54,8 +58,7 @@ public class SearchGUI extends JPanel {
                 GUIData.STD_MARGIN,
                 GUIData.STD_MARGIN + title.getHeight(),
                 parent.getWidth() - (2 * GUIData.STD_MARGIN),
-                parent.getHeight() - (title.getHeight() + 3 * GUIData.STD_MARGIN));
-        contentPanel.setBackground(DATA.COLORS.DARK_BLUE);
+                parent.getHeight() - (title.getHeight() + 2 * GUIData.STD_MARGIN));
         add(contentPanel);
 
         // "Create Search" card
@@ -67,6 +70,7 @@ public class SearchGUI extends JPanel {
     public JPanel buildCreateCard(Container parent) {
         JPanel createSearchPanel = new JPanel(null);
         createSearchPanel.setBounds(0 ,0, parent.getWidth(), parent.getHeight());
+        createSearchPanel.setBorder(new LineBorder(DATA.COLORS.BORDER_COLOR));
         createSearchPanel.setBackground(Color.WHITE);
 
         // Holds text telling user what the keyword text field is for
@@ -135,7 +139,7 @@ public class SearchGUI extends JPanel {
         createSearchPanel.add(maxPriceEntry);
 
         // Takes all input and creates the search object and searches on it
-        button = new SimpleButton(BUTTON_CREATE_TITLE, DATA.COLORS.LIGHT_BLUE, true);
+        button = new SimpleButton("hello World", DATA.COLORS.LIGHT_BLUE, true);
         button.setActiveForeground(Color.white);
         button.setBounds(
                 (createSearchPanel.getWidth() / 2) - (GUIData.WIDE_BUTTON_W / 2),
@@ -149,7 +153,6 @@ public class SearchGUI extends JPanel {
                 if (button.getText().equals("Edit")) {
                     // this will do something else
                 } else {
-
                     // Sets to what is found at the entry points; however, if what
                     // is found is the default (ie the user did not enter anything),
                     // sets to the empty string
