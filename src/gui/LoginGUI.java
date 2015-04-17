@@ -2,7 +2,7 @@ package gui;
 
 import data.DATA;
 import simplestructures.*;
-import utils.*;
+import utils.SimpleTools;
 
 import javax.swing.*;
 import java.awt.*;

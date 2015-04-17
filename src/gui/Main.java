@@ -1,11 +1,9 @@
 package gui;
 
 import data.DATA;
-import data.constants.SimpleConstants;
 import main.Manager;
 import objects.Search;
 import simplestructures.SimpleFrame;
-import simplestructures.SimpleSeparator;
 
 import javax.swing.*;
 import java.awt.*;
