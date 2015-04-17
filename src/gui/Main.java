@@ -23,6 +23,10 @@ public class Main {
     private JPanel sidePanel;
     private SearchGUI searchGUI;
 
+    // Info
+    private int sideMenuWidth;
+    private int sideMenuStartPos;
+
     public static void main(String[] args) {
         new Main(new Manager());
     }
@@ -35,8 +39,8 @@ public class Main {
         UIManager.put("TextField.foreground", DATA.COLORS.BLACK);
 
         manager = _manager;
-        int sideMenuWidth = 160;
-        int sideMenuStartPos = -160;
+        sideMenuWidth = 200;
+        sideMenuStartPos = -sideMenuWidth;
 
         // This is the GUI that will show up
         // first. It gathers the email credentials
@@ -101,11 +105,11 @@ public class Main {
                     sidePanel.setBounds(sidePanel.getX()+3, sidePanel.getY(), sidePanel.getWidth(), sidePanel.getHeight());
                     if (contentPane.getX() + GUIData.STD_MARGIN < sidePanel.getWidth() - GUIData.STD_MARGIN) {
                         contentPane.setBounds(contentPane.getX() + 4, contentPane.getY(), contentPane.getWidth() - 4, contentPane.getHeight());
-                        searchGUI.shrink(4, 160);
-                    } else if (contentPane.getX() + GUIData.STD_MARGIN != 160) {
-                        int change = 160 - contentPane.getX() - GUIData.STD_MARGIN;
+                        searchGUI.shrink(4, sideMenuWidth);
+                    } else if (contentPane.getX() + GUIData.STD_MARGIN != sideMenuWidth) {
+                        int change = sideMenuWidth - contentPane.getX() - GUIData.STD_MARGIN;
                         contentPane.setBounds(contentPane.getX() + change, contentPane.getY(), contentPane.getWidth() - change, contentPane.getHeight());
-                        searchGUI.shrink(change, 160);
+                        searchGUI.shrink(change, sideMenuWidth);
                     }
                 }
             }
