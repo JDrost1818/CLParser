@@ -40,7 +40,7 @@ public class Main {
 
         manager = _manager;
         sideMenuWidth = 200;
-        sideMenuStartPos = -sideMenuWidth;
+        sideMenuStartPos = 0;
 
         // This is the GUI that will show up
         // first. It gathers the email credentials
@@ -80,7 +80,7 @@ public class Main {
     public boolean login(final String username, final String password) {
         manager.login(username, password);
         topFrame.setVisible(true);
-        expand();
+        hide();
         return true;
     }
 
@@ -115,5 +115,22 @@ public class Main {
     }
 
     public void hide() {
+        new Timer(3, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (contentPane.getX() <= 0) {
+                    contentPane.setBounds(
+                            0,
+                            25,
+                            topFrame.getWidth(),
+                            topFrame.getHeight()-25);
+                    ((Timer) e.getSource()).stop();
+                } else {
+                    sidePanel.setBounds(-sideMenuWidth, sidePanel.getY(), sidePanel.getWidth(), sidePanel.getHeight());
+                    contentPane.setBounds(contentPane.getX() - 4, contentPane.getY(), contentPane.getWidth() + 4, contentPane.getHeight());
+                    searchGUI.expand(4, 000);
+                }
+            }
+        }).start();
     }
 }
