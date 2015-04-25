@@ -63,6 +63,10 @@ public enum CraigslistUrls {
         return this.urls[2];
     }
 
+    public boolean contains(String key) {
+        return this.urls[0].equals(key) || this.urls[1].equals(key) || this.urls[2].equals(key);
+    }
+
     public static String titleFromKey(String key) {
         for (CraigslistUrls category : CraigslistUrls.values()) {
             if (category.urls[0].equals(key) || category.urls[1].equals(key) || category.urls[2].equals(key)) {

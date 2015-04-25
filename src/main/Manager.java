@@ -34,8 +34,9 @@ public class Manager {
         this.pricer = new Pricer();
         this.translator = new Translator();
 
-        addSearch(new Search(CraigslistUrls.VIDEO_GAMING.owner(), "minneapolis", "XBOX ONE", ""));
-        addSearch(new Search(CraigslistUrls.ELECTRONICS.owner(), "minneapolis", "TV", "Projection"));
+        //addSearch(new Search(CraigslistUrls.VIDEO_GAMING.owner(), "minneapolis", "XBOX ONE", ""));
+        addSearch(new Search(CraigslistUrls.CELL_PHONES.owner(), "minneapolis", "", ""));
+        //addSearch(new Search(CraigslistUrls.ELECTRONICS.owner(), "minneapolis", "TV", "Projection"));
     }
 
     public void run(String[] args) {
@@ -53,6 +54,7 @@ public class Manager {
             System.out.println("Email Recipient: ");
             toEmail = scanner.next();
         }
+        singleSearch(searches);
     }
 
     public void login(String _username, String _password) {
@@ -63,6 +65,17 @@ public class Manager {
 
     public void singleSearch(ArrayList<Search> searches) {
         ArrayList<Post> newPosts = parser.parseCraigslist(searches);
+        String priceSearch;
+        int i = 0;
+        for (Post curPost : newPosts) {
+            if (i++ > 20) {
+                break;
+            }
+            System.out.println(curPost);
+            priceSearch = translator.translate(curPost);
+            if (!priceSearch.equals(""))
+                curPost.setValue(pricer.getItemPrice(priceSearch));
+        }
 
         if (newPosts.size() > 0 && !username.equals(""))
             this.emailPosts(this.username, this.password, this.toEmail, searches, newPosts);

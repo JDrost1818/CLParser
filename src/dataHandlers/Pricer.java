@@ -12,7 +12,15 @@ public class Pricer {
         if (el.size() > 0) {
             return Double.parseDouble(el.get(0).text().split("\\$")[1]);
         }
-        return -1;
+        return 0;
+    }
+
+    public double getItemsPrice(String[] searchTerms) {
+        double total = 0;
+        for (String searchTerm : searchTerms) {
+            total += getItemPrice(searchTerm);
+        }
+        return total;
     }
 
     private String getThePriceGeekUrl(String searchTerm) {

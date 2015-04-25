@@ -14,6 +14,7 @@ public class Post {
     private String location;
 
     private int price = -1;
+    private double value = -1;
     private double timePosted;
 
     private Search search;
@@ -78,11 +79,15 @@ public class Post {
 
     @Override
     public String toString() {
-        return "$" + price + " " + title + " " + link;
+        return "$" + price + " ($" + value + ") " + title + " " + link;
     }
 
     public int price() {
         return this.price;
+    }
+
+    public void setValue(double _value) {
+        value = _value;
     }
 
     public boolean isFromSearch(Search potSearch) {
