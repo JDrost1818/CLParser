@@ -66,7 +66,7 @@ public class Main {
                 topFrame.getHeight()-25);
         contentPane.setBackground(Color.WHITE);
 
-        searchGUI = new SearchGUI(Main.this, contentPane);
+        searchGUI = new SearchGUI(contentPane);
 
         contentPane.add("search", searchGUI);
         topFrame.add(contentPane);
@@ -105,11 +105,9 @@ public class Main {
                     sidePanel.setBounds(sidePanel.getX()+3, sidePanel.getY(), sidePanel.getWidth(), sidePanel.getHeight());
                     if (contentPane.getX() + GUIData.STD_MARGIN < sidePanel.getWidth() - GUIData.STD_MARGIN) {
                         contentPane.setBounds(contentPane.getX() + 4, contentPane.getY(), contentPane.getWidth() - 4, contentPane.getHeight());
-                        searchGUI.shrink(4, sideMenuWidth);
                     } else if (contentPane.getX() + GUIData.STD_MARGIN != sideMenuWidth) {
                         int change = sideMenuWidth - contentPane.getX() - GUIData.STD_MARGIN;
                         contentPane.setBounds(contentPane.getX() + change, contentPane.getY(), contentPane.getWidth() - change, contentPane.getHeight());
-                        searchGUI.shrink(change, sideMenuWidth);
                     }
                 }
             }

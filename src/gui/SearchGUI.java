@@ -13,9 +13,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class SearchGUI extends JPanel implements iCompressible {
-
-    private Main controller;
+public class SearchGUI extends JPanel {
 
     private CardLayout contentPanelLayout = new CardLayout();
 
@@ -45,8 +43,7 @@ public class SearchGUI extends JPanel implements iCompressible {
 
     private JPanel createSearchPanel;
 
-    public SearchGUI(Main _controller, Container parent) {
-        this.controller = _controller;
+    public SearchGUI(Container parent) {
         this.setSize(parent.getSize());
 
         setBackground(parent.getBackground());
@@ -150,9 +147,9 @@ public class SearchGUI extends JPanel implements iCompressible {
                     // Creates search, saves if requested, and runs the search
                     Search newSearch = new Search(CraigslistUrls.ALL.owner(), "Minneapolis", search, exclusion, minPrice, maxPrice);
                     int reply = JOptionPane.showConfirmDialog(null, "Would you like to save this\nsearch for later use?", "", JOptionPane.YES_NO_OPTION);
-                    if (reply == JOptionPane.YES_OPTION)
-                        controller.addSearch(newSearch);
-                    controller.search(newSearch);
+                    //if (reply == JOptionPane.YES_OPTION)
+                        //controller.addSearch(newSearch);
+                    //controller.search(newSearch);
                 }
             }
         });
@@ -184,32 +181,8 @@ public class SearchGUI extends JPanel implements iCompressible {
         contentPanelLayout.show(contentPanel, "create");
     }
 
-    @Override
-    public void shrink(int numPixels, int stopPosition) {
-        createSearchPanel.setBounds(
-                createSearchPanel.getX(),
-                createSearchPanel.getY(),
-                createSearchPanel.getWidth() - numPixels,
-                createSearchPanel.getHeight());
-        updateComponentLocations();
-    }
-
-    @Override
-    public void expand(int numPixels, int stopPosition) {
-        createSearchPanel.setBounds(
-                createSearchPanel.getX(),
-                createSearchPanel.getY(),
-                createSearchPanel.getWidth() + numPixels,
-                createSearchPanel.getHeight());
-        updateComponentLocations();
-    }
-
     public void updateComponentLocations() {
-        keywordLabel.setBounds(
-                GUIData.STD_MARGIN,
-                GUIData.STD_MARGIN * 2,
-                keywordLabel.getWidth(),
-                keywordLabel.getHeight());
+        keywordLabel.setMargin(GUIData.STD_MARGIN, GUIData.STD_MARGIN * 2);
 
         excludeLabel.setBounds(
                 keywordLabel.getX(),
@@ -229,11 +202,9 @@ public class SearchGUI extends JPanel implements iCompressible {
                 excludedWordsEntry.getWidth(),
                 (int) GUIData.HEADER_FONT_SIZE + 10);
 
-        minPriceLabel.setBounds(
+        minPriceLabel.setMargin(
                 GUIData.STD_MARGIN,
-                excludeLabel.getY() + excludeLabel.getHeight() + (int) (.9 * GUIData.STD_MARGIN),
-                minPriceLabel.getWidth(),
-                minPriceLabel.getHeight());
+                excludeLabel.getY() + excludeLabel.getHeight() + (int) (.9 * GUIData.STD_MARGIN));
 
         minPriceEntry.setBounds(
                 minPriceLabel.getX() + minPriceLabel.getWidth() + (int)(.25 * GUIData.STD_MARGIN),
@@ -241,11 +212,9 @@ public class SearchGUI extends JPanel implements iCompressible {
                 75,
                 minPriceLabel.getHeight());
 
-        maxPriceLabel.setBounds(
+        maxPriceLabel.setMargin(
                 minPriceEntry.getX() + minPriceEntry.getWidth() + GUIData.STD_MARGIN,
-                minPriceEntry.getY(),
-                maxPriceLabel.getWidth(),
-                maxPriceLabel.getHeight());
+                minPriceEntry.getY());
 
         maxPriceEntry.setBounds(
                 maxPriceLabel.getX() + maxPriceLabel.getWidth() + (int)(.25 * GUIData.STD_MARGIN),

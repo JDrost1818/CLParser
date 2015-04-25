@@ -10,6 +10,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Manager {
 
@@ -36,6 +37,14 @@ public class Manager {
             username = args[0];
             password = args[1];
             toEmail = args[2];
+        } else {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Email: ");
+            username = scanner.next();
+            System.out.println("Password: ");
+            password = scanner.next();
+            System.out.println("Email Recipient: ");
+            toEmail = scanner.next();
         }
         singleSearch(this.searches);
     }

@@ -26,7 +26,7 @@ public class ObjectTests {
     }
 
     @Test
-    public void postConstrutorTest() throws IOException {
+    public void postConstructorTest() throws IOException {
         Post curPost;
         Search dummySearch = new Search("cat", "city", "match", "exclusion", -1, -1);
         String dir = System.getProperty("user.dir") + "\\test\\resources";
