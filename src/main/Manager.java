@@ -1,8 +1,7 @@
 package main;
 
 import data.CraigslistUrls;
-import dataHandlers.Email;
-import dataHandlers.JSoupAddOn;
+import dataHandlers.*;
 import objects.Post;
 import objects.Search;
 import org.jsoup.nodes.Document;
@@ -19,6 +18,10 @@ public class Manager {
     private String password = "";
     private String toEmail = "";
 
+    private Parser parser;
+    private Pricer pricer;
+    private Translator translator;
+
     public static void main(String[] args) {
         Manager app = new Manager();
         app.run(args);
@@ -27,6 +30,10 @@ public class Manager {
     private ArrayList<Search> searches = new ArrayList<Search>();
 
     public Manager() {
+        this.parser = new Parser();
+        this.pricer = new Pricer();
+        this.translator = new Translator();
+
         addSearch(new Search(CraigslistUrls.VIDEO_GAMING.owner(), "minneapolis", "XBOX ONE", ""));
         addSearch(new Search(CraigslistUrls.ELECTRONICS.owner(), "minneapolis", "TV", "Projection"));
     }
@@ -46,7 +53,6 @@ public class Manager {
             System.out.println("Email Recipient: ");
             toEmail = scanner.next();
         }
-        singleSearch(this.searches);
     }
 
     public void login(String _username, String _password) {
@@ -56,7 +62,7 @@ public class Manager {
     }
 
     public void singleSearch(ArrayList<Search> searches) {
-        ArrayList<Post> newPosts = parsePages(searches);
+        ArrayList<Post> newPosts = parser.parseCraigslist(searches);
 
         if (newPosts.size() > 0 && !username.equals(""))
             this.emailPosts(this.username, this.password, this.toEmail, searches, newPosts);
@@ -69,9 +75,7 @@ public class Manager {
             message += CraigslistUrls.titleFromKey(curSearch.category()) + "\n\n";
             for (Post curPost : newPosts) {
                 if (curPost.isFromSearch(curSearch)) {
-                    message += "\t$" +  curPost.price() + " - " +
-                                        curPost.title() + " " +
-                                        curPost.link() + "\n";
+                    message += "\t" +  curPost + "\n";
                 }
             }
             message += "\n";
@@ -81,57 +85,5 @@ public class Manager {
 
     public void addSearch(Search newSearch) {
         searches.add(newSearch);
-    }
-
-    /*  Parses over a Craigslist page and runs until no more pages, or settings
-        defined by user indicate a stop is required. Gathers as much data as
-        possible while doing so. Returns a list of new posts.
-    */
-    public ArrayList<Post> parsePages(ArrayList<Search> searches) {
-        double curTime = System.currentTimeMillis();
-
-        ArrayList<Post> newPosts = new ArrayList<Post>();
-        Document doc;
-
-        int i, numEntries, numAlreadyVisited;
-
-        for (Search curSearch : searches) {
-            // Reset variables
-            i = 0; numEntries = 100; numAlreadyVisited = 0;
-
-            // Iterate over whole pages
-            while (numEntries == 100 && numAlreadyVisited < 25) {
-                numAlreadyVisited = 0;
-
-                System.out.println("Scanning Page " + (++i) + " @ " + curSearch.searchUrl(i));
-                doc = JSoupAddOn.connect(curSearch.searchUrl(i));
-
-                if (doc == null) {
-                    System.out.println("Could not connect, moving on");
-                    break;
-                } else {
-                    // Gets the number of posts found and isolates
-                    // the posts by trimming the document to only them
-                    numEntries = (testing) ? 5 : doc.select("p.row").size();
-                    Elements allPosts = doc.select("div.content");
-                    Element curPost;
-
-                    // Iterates through all the posts found for the page
-                    // Currently just prints all relevant information
-                    for (int j = 0; j < numEntries; j++) {
-                        curPost = allPosts.select("p.row").get(j);
-                        if (curSearch.alreadyVisited(curPost.attr("data-pid"))) {
-                            numAlreadyVisited++;
-                        } else {
-                            newPosts.add(new Post(curSearch, curPost));
-                            curSearch.addPage(curPost.attr("data-pid"));
-
-                        }
-                    }
-                }
-            }
-        }
-        System.out.println("Process took " + (System.currentTimeMillis() - curTime) / 1000 + " seconds");
-        return newPosts;
     }
 }

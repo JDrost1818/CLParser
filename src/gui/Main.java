@@ -128,7 +128,6 @@ public class Main {
                 } else {
                     sidePanel.setBounds(-sideMenuWidth, sidePanel.getY(), sidePanel.getWidth(), sidePanel.getHeight());
                     contentPane.setBounds(contentPane.getX() - 4, contentPane.getY(), contentPane.getWidth() + 4, contentPane.getHeight());
-                    searchGUI.expand(4, 000);
                 }
             }
         }).start();
