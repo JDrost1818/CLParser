@@ -17,6 +17,11 @@ public class JSoupAddOn {
                 doc = Jsoup.connect(url).get();
             } catch (IOException e) {
                 System.out.println("Error while trying to connect to URL. Retrying");
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e1) {
+                    // Do nothing
+                }
                 numTries++;
             }
         }

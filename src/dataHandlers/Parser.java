@@ -28,7 +28,8 @@ public class Parser {
             i = 0; numEntries = 100; numAlreadyVisited = 0;
 
             // Iterate over whole pages
-            while (numEntries == 100 && numAlreadyVisited < 25) {
+            // Gonna limit to 3 pages for right now
+            while (numEntries == 100 && numAlreadyVisited < 25 && i < 1) {
                 numAlreadyVisited = 0;
 
                 System.out.println("Scanning Page " + (++i) + " @ " + curSearch.searchUrl(i));

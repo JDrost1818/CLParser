@@ -53,6 +53,17 @@ public class Post {
         location = post.select("span.pnr").select("small").text().replace("(", "").replace(")", "");
     }
 
+    public Post(String _title, String _descr, String _link, String _cty, String _cat, String _pid, String _loc, int _price) {
+        this.title = _title;
+        this.description = _descr;
+        this.link = _link;
+        this.county = _cty;
+        this.category = _cat;
+        this.postId = _pid;
+        this.location = _loc;
+        this.price = _price;
+    }
+
     public String title() {
         return this.title;
     }
@@ -79,7 +90,9 @@ public class Post {
 
     @Override
     public String toString() {
-        return "$" + price + " ($" + value + ") " + title + " " + link;
+        if (value != -1.0)
+            return "$" + price + " ($" + value + ") " + title + " " + link;
+        return "$" + price + " " + title + " " + link;
     }
 
     public int price() {

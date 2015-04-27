@@ -4,9 +4,6 @@ import data.CraigslistUrls;
 import dataHandlers.*;
 import objects.Post;
 import objects.Search;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -34,9 +31,9 @@ public class Manager {
         this.pricer = new Pricer();
         this.translator = new Translator();
 
-        //addSearch(new Search(CraigslistUrls.VIDEO_GAMING.owner(), "minneapolis", "XBOX ONE", ""));
+        addSearch(new Search(CraigslistUrls.VIDEO_GAMING.owner(), "minneapolis", "XBOX ONE", ""));
         addSearch(new Search(CraigslistUrls.CELL_PHONES.owner(), "minneapolis", "", ""));
-        //addSearch(new Search(CraigslistUrls.ELECTRONICS.owner(), "minneapolis", "TV", "Projection"));
+        addSearch(new Search(CraigslistUrls.ELECTRONICS.owner(), "minneapolis", "TV", "Projection"));
     }
 
     public void run(String[] args) {
@@ -54,7 +51,19 @@ public class Manager {
             System.out.println("Email Recipient: ");
             toEmail = scanner.next();
         }
-        singleSearch(searches);
+        loop();
+    }
+
+    private void loop() {
+        while (true) try {
+            // Do a search and then sleep
+            // for 20 minutes
+            singleSearch(searches);
+            System.out.println("\nSleeping...");
+            Thread.sleep(1200000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void login(String _username, String _password) {
@@ -65,16 +74,15 @@ public class Manager {
 
     public void singleSearch(ArrayList<Search> searches) {
         ArrayList<Post> newPosts = parser.parseCraigslist(searches);
-        String priceSearch;
         int i = 0;
+        String priceSearch;
         for (Post curPost : newPosts) {
-            if (i++ > 20) {
-                break;
+            if (CraigslistUrls.CELL_PHONES.contains(curPost.category())) {
+                System.out.println(i++ + " Finding a price");
+                priceSearch = translator.translate(curPost);
+                if (!priceSearch.equals(""))
+                    curPost.setValue(pricer.getItemPrice(priceSearch));
             }
-            System.out.println(curPost);
-            priceSearch = translator.translate(curPost);
-            if (!priceSearch.equals(""))
-                curPost.setValue(pricer.getItemPrice(priceSearch));
         }
 
         if (newPosts.size() > 0 && !username.equals(""))

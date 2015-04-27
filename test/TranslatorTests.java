@@ -1,5 +1,6 @@
 import data.CraigslistUrls;
 import dataHandlers.Translator;
+import objects.Post;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -38,6 +39,43 @@ public class TranslatorTests {
 
         for (int i=0; i < titles.length; i++) {
             assertEquals(expectedTranslations[i], translator.translate(titles[i], CraigslistUrls.CELL_PHONES.all()));
+        }
+    }
+
+    @Test
+    public void translateConsoleTest() {
+        Translator translator = new Translator();
+
+        Post consolePost = new Post("x-box one with kinect",
+                                    "Looking to get rid of all my Xbox stuff. I have : Xbox one 500 GB all cords and Kinect. I put a carbon fiber skin on the Xbox and Kinect, looks really cool. \n" +
+                                    "3 Xbox one wireless controllers\n" +
+                                    "1 Battery charging station with 2 batteries \n" +
+                                    "1 Xbox brand rechargeable battery\n" +
+                                    "Far cry 4\n" +
+                                    "Madden 25\n" +
+                                    "Saints Row 4\n" +
+                                    "Forza 5\n" +
+                                    "Halo 4\n" +
+                                    "GTA V\n",
+                                    "", "", "", "", "", 0);
+
+        String[] items = translator.translateConsole(consolePost);
+
+        String[] expectedItems = new String[] {
+                "Xbox One with Kinect",
+                "Xbox One Controller",
+                "Xbox One Controller",
+                "Xbox One Controller",
+                "Far Cry 4",
+                "Madden 25",
+                "Saints Row 4",
+                "Forza 5",
+                "Halo 4",
+                "Grand Theft Auto 5"
+        };
+
+        for (int i=0; i < items.length; i++) {
+            assertEquals(expectedItems[i], items[i]);
         }
     }
 }
